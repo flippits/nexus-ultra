@@ -1,7 +1,13 @@
 {
   "name": "nexus-ultra",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "description": "AI-powered cybersecurity platform — 12 elite agents, Groq/Gemini free AI, Kali Docker, OSINT",
+  "author": "NEXUS ULTRA",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flippits/nexus-ultra"
+  },
   "type": "module",
   "main": "electron.cjs",
   "scripts": {
@@ -9,10 +15,11 @@
     "build": "vite build",
     "electron": "electron .",
     "start": "lsof -ti:5173,8765 | xargs kill -9 2>/dev/null; concurrently \"npm run dev\" \"wait-on http://localhost:5173 && NODE_ENV=development electron .\"",
-    "build:mac": "npm run build && electron-builder --mac",
-    "build:win": "npm run build && electron-builder --win",
-    "build:all": "npm run build && electron-builder --mac --win",
-    "build:app": "npm run build && electron-builder --mac",
+    "build:mac": "npm run build && electron-builder --mac --publish never",
+    "build:win": "npm run build && electron-builder --win --publish never",
+    "build:linux": "npm run build && electron-builder --linux --publish never",
+    "build:all": "npm run build && electron-builder --mac --win --publish never",
+    "build:app": "npm run build && electron-builder --mac --publish never",
     "lint": "eslint .",
     "preview": "vite preview"
   },

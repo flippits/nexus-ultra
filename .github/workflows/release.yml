@@ -71,7 +71,7 @@ jobs:
 
       - name: Build Linux AppImage
         working-directory: frontend
-        run: npm run build && npx electron-builder --linux
+        run: npm run build:linux
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
