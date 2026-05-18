@@ -9,3 +9,4 @@ dist-app/
 backend/*.txt
 !backend/requirements.txt
 data/wordlists/rockyou.txt
+data/nexus.db

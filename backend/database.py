@@ -4,8 +4,11 @@ from sqlalchemy import String, Text, Integer, Float, ForeignKey, DateTime, Boole
 from datetime import datetime, timezone
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'nexus.db')
-os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+# NEXUS_DATA_DIR is set by Electron to the user's private app data directory.
+# Falls back to local data/ only in raw dev mode (never bundled).
+_data_dir = os.environ.get('NEXUS_DATA_DIR') or os.path.join(os.path.dirname(__file__), '..', 'data')
+os.makedirs(_data_dir, exist_ok=True)
+DB_PATH = os.path.join(_data_dir, 'nexus.db')
 
 engine = create_async_engine(f"sqlite+aiosqlite:///{DB_PATH}", echo=False)
 SessionLocal = async_sessionmaker(engine, expire_on_commit=False)

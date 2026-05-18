@@ -115,7 +115,11 @@ async function startBackend() {
     {
       cwd: backendPath,
       stdio: 'pipe',
-      env: { ...process.env, PYTHONPATH: backendPath },
+      env: {
+        ...process.env,
+        PYTHONPATH: backendPath,
+        NEXUS_DATA_DIR: app.getPath('userData'),
+      },
     }
   )
   backendProcess.stdout.on('data', d => console.log('[BACKEND]', d.toString().trim()))
