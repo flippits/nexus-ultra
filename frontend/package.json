@@ -73,8 +73,15 @@
           "!**/*.db",
           "!**/*.txt",
           "!**/.env",
-          "!.git/**"
+          "!.git/**",
+          "!nexus_backend.spec",
+          "!build/**"
         ]
+      },
+      {
+        "from": "bundled-backend",
+        "to": "backend/nexus_backend",
+        "filter": ["**/*"]
       }
     ],
     "directories": {

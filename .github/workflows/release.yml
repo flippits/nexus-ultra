@@ -11,11 +11,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install Python backend deps + PyInstaller
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Bundle Python backend
+        working-directory: backend
+        run: pyinstaller nexus_backend.spec --distpath ../frontend/bundled-backend --workpath /tmp/pyibuild --noconfirm
+
+      - name: Install frontend dependencies
         working-directory: frontend
         run: npm install
 
@@ -36,11 +50,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install Python backend deps + PyInstaller
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Bundle Python backend
+        working-directory: backend
+        run: pyinstaller nexus_backend.spec --distpath ..\frontend\bundled-backend --workpath C:\Temp\pyibuild --noconfirm
+
+      - name: Install frontend dependencies
         working-directory: frontend
         run: npm install
 
@@ -61,11 +89,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install system libs for weasyprint
+        run: sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0 libcairo2 libgdk-pixbuf2.0-0
+
+      - name: Install Python backend deps + PyInstaller
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Bundle Python backend
+        working-directory: backend
+        run: pyinstaller nexus_backend.spec --distpath ../frontend/bundled-backend --workpath /tmp/pyibuild --noconfirm
+
+      - name: Install frontend dependencies
         working-directory: frontend
         run: npm install
 
@@ -101,7 +146,9 @@ jobs:
           body: |
             ## NEXUS ULTRA ${{ github.ref_name }}
 
-            AI-powered cybersecurity platform with 12 elite agents, Groq/Gemini free AI, Kali Linux Docker integration, and full OSINT capabilities.
+            AI-powered cybersecurity platform — 12 elite agents, free cloud AI, Kali Linux Docker, full OSINT.
+
+            **Python is not required** — the backend is bundled inside the installer.
 
             ### Downloads
             | Platform | File |
@@ -110,14 +157,15 @@ jobs:
             | Windows 10/11 | `NEXUS ULTRA Setup *.exe` |
             | Linux | `NEXUS ULTRA-*.AppImage` |
 
-            ### Requirements
-            - **Python 3.10+** must be installed ([python.org](https://python.org))
-            - **Ollama** for free local AI ([ollama.com](https://ollama.com)) — optional
-            - **Groq API key** for free cloud AI ([console.groq.com](https://console.groq.com)) — optional
+            ### Optional (for enhanced features)
+            - **Docker** — for Kali Linux integration
+            - **Ollama** — for free local AI models ([ollama.com](https://ollama.com))
+            - **Groq API key** — free 800 tok/s cloud AI ([console.groq.com](https://console.groq.com))
+            - **Gemini API key** — free 1M tokens/day ([aistudio.google.com](https://aistudio.google.com/app/apikey))
 
             ### First Launch
-            The app will auto-install Python dependencies on first run.
-            Follow the onboarding wizard to configure your AI engine.
+            The onboarding wizard guides you through AI engine setup.
+            No prerequisites — just download and run.
           files: |
             artifacts/**/*.dmg
             artifacts/**/*.exe

@@ -10,3 +10,8 @@ backend/*.txt
 !backend/requirements.txt
 data/wordlists/rockyou.txt
 data/nexus.db
+# PyInstaller build artifacts
+backend/build/
+backend/dist/
+frontend/bundled-backend/*
+!frontend/bundled-backend/.gitkeep

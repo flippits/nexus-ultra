@@ -57,8 +57,6 @@ function findPython() {
   return isWin ? 'python' : 'python3'
 }
 
-const PYTHON = findPython()
-
 // ── Backend path (dev vs packaged) ────────────────────────────────────────────
 
 function getBackendPath() {
@@ -67,9 +65,23 @@ function getBackendPath() {
     : path.join(__dirname, '..', 'backend')
 }
 
-// ── Install Python deps (cached by requirements.txt hash) ─────────────────────
+// ── Detect whether we have a PyInstaller-compiled backend binary ───────────────
 
-async function installDeps(backendPath) {
+function getBundledBinary(backendPath) {
+  const isWin = process.platform === 'win32'
+  const candidates = [
+    // PyInstaller one-folder layout
+    path.join(backendPath, 'nexus_backend', isWin ? 'nexus_backend.exe' : 'nexus_backend'),
+    // flat layout fallback
+    path.join(backendPath, isWin ? 'nexus_backend.exe' : 'nexus_backend'),
+  ]
+  return candidates.find(p => fs.existsSync(p)) || null
+}
+
+// ── Install Python deps (cached by requirements.txt hash) ─────────────────────
+// Only called when no bundled binary is present.
+
+async function installDeps(backendPath, python) {
   const reqFile = path.join(backendPath, 'requirements.txt')
   if (!fs.existsSync(reqFile)) return
 
@@ -79,11 +91,11 @@ async function installDeps(backendPath) {
 
   const flagFile = path.join(app.getPath('userData'), 'deps_hash')
   const prevHash = fs.existsSync(flagFile) ? fs.readFileSync(flagFile, 'utf8').trim() : ''
-  if (hash === prevHash) return // already installed for this exact requirements.txt
+  if (hash === prevHash) return
 
   console.log('[NEXUS] Installing Python dependencies...')
   await new Promise((resolve) => {
-    const pip = spawn(PYTHON, ['-m', 'pip', 'install', '--user', '-q', '-r', reqFile], {
+    const pip = spawn(python, ['-m', 'pip', 'install', '--user', '-q', '-r', reqFile], {
       cwd: backendPath,
       stdio: 'pipe',
     })
@@ -107,27 +119,41 @@ async function installDeps(backendPath) {
 
 async function startBackend() {
   const backendPath = getBackendPath()
-  await installDeps(backendPath)
+  const bundled = getBundledBinary(backendPath)
 
-  backendProcess = spawn(
-    PYTHON,
-    ['-m', 'uvicorn', 'main:app', '--host', '127.0.0.1', '--port', '8765'],
-    {
-      cwd: backendPath,
-      stdio: 'pipe',
-      env: {
-        ...process.env,
-        PYTHONPATH: backendPath,
-        NEXUS_DATA_DIR: app.getPath('userData'),
-      },
-    }
-  )
+  let cmd, args, cwd
+
+  if (bundled) {
+    // Bundled PyInstaller binary — no Python needed
+    console.log('[NEXUS] Using bundled backend:', bundled)
+    cmd = bundled
+    args = []
+    cwd = path.dirname(bundled)
+  } else {
+    // Fall back to system Python + uvicorn
+    const python = findPython()
+    await installDeps(backendPath, python)
+    cmd = python
+    args = ['-m', 'uvicorn', 'main:app', '--host', '127.0.0.1', '--port', '8765']
+    cwd = backendPath
+    console.log('[NEXUS] Using system Python:', python)
+  }
+
+  backendProcess = spawn(cmd, args, {
+    cwd,
+    stdio: 'pipe',
+    env: {
+      ...process.env,
+      PYTHONPATH: backendPath,
+      NEXUS_DATA_DIR: app.getPath('userData'),
+    },
+  })
   backendProcess.stdout.on('data', d => console.log('[BACKEND]', d.toString().trim()))
   backendProcess.stderr.on('data', d => {
     const msg = d.toString()
     if (!msg.includes('Address already in use')) console.log('[BACKEND]', msg.trim())
   })
-  backendProcess.on('error', () => {}) // already running — that's fine
+  backendProcess.on('error', () => {})
 }
 
 // ── Health-check polling ──────────────────────────────────────────────────────
