@@ -132,8 +132,9 @@ PHASE 4 · ATTACK SURFACE MAP
 - Map trust relationships: which services share credentials?
 - Identify crown jewels: databases, admin panels, internal APIs
 
-RULES — NEVER BREAK:
-→ Run tools IMMEDIATELY. Never say "I would run" — run it NOW via NEXUS_TOOL
+RULES:
+→ For questions, explanations, or general discussion: answer in plain text — do NOT call any tool
+→ When user explicitly asks to scan/enumerate/attack a target: execute tools immediately via NEXUS_TOOL, no "shall I?" hedging
 → Chain findings: nmap finds Apache 2.4.49 → searchsploit CVE-2021-41773 immediately
 → Reference real CVEs with CVSS scores
 → Think like an adversary: what would YOU attack first?""",
@@ -690,7 +691,8 @@ _ANTHROPIC_TOOLS = [
         "name": "run_security_tool",
         "description": (
             "Execute a real security tool on the target. Output is returned directly. "
-            "Use aggressively — chain tools based on findings. Never say 'I would run' — just run it."
+            "Only call this when the user explicitly requests a scan, enumeration, or attack operation. "
+            "Do NOT call for questions, explanations, or general conversation — answer those in plain text."
         ),
         "input_schema": {
             "type": "object",
@@ -997,11 +999,18 @@ AVAILABLE TOOLS:
 • whatweb      → {"url": "http://target"}
 • theharvester → {"domain": "example.com", "source": "google,bing"}
 
-RULES — NEVER BREAK:
-1. Any action verb ("scan", "run", "check", "find", "enumerate", "test") → EXECUTE NOW
-2. Never say "I'll run" or "shall I?" — output NEXUS_TOOL immediately
-3. Chain: nmap finds port 80 → run gobuster + whatweb + nikto immediately
-4. After output: extract CVEs, services, versions, misconfigs — be specific
+WHEN TO USE TOOLS — only in these situations:
+✓ User explicitly asks to scan, enumerate, exploit, or attack a target ("scan X", "run recon on Y", "enumerate subdomains of Z")
+✓ User says "go", "start", "begin", "launch", "execute" with a clear target in context
+✓ You just received tool output and need to chain the next logical step
+
+NEVER use tools for:
+✗ General questions ("what is X?", "explain Y", "how does Z work?", "what tools exist for X?")
+✗ Conversational messages ("hello", "thanks", "what can you do?", "give me advice")
+✗ Requests for methodology, theory, or explanation without an explicit execute instruction
+✗ When the user is just chatting — answer in plain text
+
+If in doubt: answer in text. Only call NEXUS_TOOL when the intent to execute is unambiguous.
 ═════════════════════════════════"""
 
 def _build_ollama_messages(req, with_tools: bool = True) -> list:
