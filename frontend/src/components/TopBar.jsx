@@ -2,6 +2,9 @@ import { useStore } from '../store'
 import { useState, useEffect, useRef } from 'react'
 import { getTargets } from '../utils/api'
 
+const platform = typeof window !== 'undefined' ? (window.electronAPI?.platform ?? '') : ''
+const isMac = platform !== 'win32' && platform !== 'linux'
+
 export default function TopBar() {
   const { backendOnline, activeTarget, setActiveTarget, targets, setTargets } = useStore()
   const [time, setTime] = useState(new Date())
@@ -157,7 +160,7 @@ export default function TopBar() {
         </span>
         <div style={{ width: 1, height: 16, background: 'var(--border)' }} />
         <kbd
-          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))}
+          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: isMac, ctrlKey: !isMac, bubbles: true }))}
           style={{
             background: 'var(--bg-card)', border: '1px solid var(--border)',
             padding: '2px 8px', fontSize: 10, color: 'var(--text-muted)',
@@ -165,7 +168,7 @@ export default function TopBar() {
           }}
           title="Open command palette"
         >
-          ⌘K
+          {isMac ? '⌘K' : 'Ctrl+K'}
         </kbd>
       </div>
     </div>

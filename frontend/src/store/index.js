@@ -39,7 +39,11 @@ export const useStore = create((set, get) => ({
   aiThinking: false,
   setAiThinking: (v) => set({ aiThinking: v }),
 
-  // Active agent
+  // Active agent (selected in AI page — also settable from command palette)
+  selectedAgent: 'recon',
+  setSelectedAgent: (agent) => set({ selectedAgent: agent }),
+
+  // Active running agents
   activeAgents: [],
   setActiveAgents: (agents) => set({ activeAgents: agents }),
 

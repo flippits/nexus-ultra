@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useStore } from '../store'
 
+const platform = typeof window !== 'undefined' ? (window.electronAPI?.platform ?? '') : ''
+const isMac = platform !== 'win32' && platform !== 'linux'
+const KBD = isMac ? '⌘K' : 'Ctrl+K'
+
 const COMMANDS = [
   // Navigation
   { id: 'warroom',   label: 'War Room',       desc: 'Command center overview',     icon: '⚡', type: 'nav',    view: 'warroom' },
@@ -25,7 +29,7 @@ const COMMANDS = [
 ]
 
 export default function CommandPalette() {
-  const { activeView, setActiveView } = useStore()
+  const { activeView, setActiveView, setSelectedAgent } = useStore()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState(0)
@@ -57,6 +61,7 @@ export default function CommandPalette() {
     : COMMANDS
 
   const execute = (cmd) => {
+    if (cmd.agent) setSelectedAgent(cmd.agent)
     setActiveView(cmd.view)
     setOpen(false)
     setQuery('')
@@ -91,7 +96,7 @@ export default function CommandPalette() {
       >
         {/* Search input */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
-          <span style={{ color: 'var(--accent-cyan)', fontSize: 16 }}>⌘</span>
+          <span style={{ color: 'var(--accent-cyan)', fontSize: 16 }}>{isMac ? '⌘' : '⌃'}</span>
           <input
             ref={inputRef}
             value={query}
@@ -152,7 +157,7 @@ export default function CommandPalette() {
         <div style={{ padding: '8px 16px', borderTop: '1px solid var(--border)', display: 'flex', gap: 16, color: 'var(--text-muted)', fontSize: 10 }}>
           <span><kbd style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '1px 5px', borderRadius: 2, marginRight: 4 }}>↑↓</kbd>navigate</span>
           <span><kbd style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '1px 5px', borderRadius: 2, marginRight: 4 }}>↵</kbd>select</span>
-          <span><kbd style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '1px 5px', borderRadius: 2, marginRight: 4 }}>⌘K</kbd>toggle</span>
+          <span><kbd style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '1px 5px', borderRadius: 2, marginRight: 4 }}>{KBD}</kbd>toggle</span>
         </div>
       </div>
     </div>

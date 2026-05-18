@@ -47,7 +47,6 @@ a = Analysis(
         'ollama',
         'dotenv',
         'jinja2',
-        'weasyprint',
         'serial',
     ],
     excludes=[

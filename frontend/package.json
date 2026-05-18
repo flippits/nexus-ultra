@@ -82,7 +82,7 @@
         ]
       },
       {
-        "from": "bundled-backend",
+        "from": "bundled-backend/nexus_backend",
         "to": "backend/nexus_backend",
         "filter": ["**/*"]
       }

@@ -32,9 +32,8 @@ const QUICK_PROMPTS = [
 const SPEED_COLOR = { fastest: 'var(--accent-green)', fast: 'var(--accent-cyan)', slow: 'var(--accent-yellow)' }
 
 export default function AIPage() {
-  const { aiMessages, addAiMessage, aiThinking, setAiThinking, activeTarget, addNotification } = useStore()
+  const { aiMessages, addAiMessage, aiThinking, setAiThinking, activeTarget, addNotification, selectedAgent: activeAgent, setSelectedAgent: setActiveAgent } = useStore()
   const [input, setInput] = useState('')
-  const [activeAgent, setActiveAgent] = useState('recon')
   const [agentRunning, setAgentRunning] = useState(null)
   const [models, setModels] = useState([])
   const [selectedModel, setSelectedModel] = useState(null)

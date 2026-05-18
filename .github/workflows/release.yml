@@ -98,9 +98,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install system libs for weasyprint
-        run: sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0 libcairo2 libgdk-pixbuf2.0-0
-
       - name: Install Python backend deps + PyInstaller
         working-directory: backend
         run: |

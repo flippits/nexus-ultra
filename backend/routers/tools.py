@@ -13,8 +13,8 @@ import docker_manager as dm
 
 router = APIRouter()
 
-# Wordlist paths — prefer our local copies, fallback to system paths
-WL_BASE = os.path.expanduser("~/nexus-ultra/data/wordlists")
+# Wordlist paths relative to the repo root (two levels up from this file)
+WL_BASE = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'wordlists')
 ROCKYOU = os.path.join(WL_BASE, "rockyou.txt")
 COMMON = os.path.join(WL_BASE, "common.txt")
 DIRS = os.path.join(WL_BASE, "directories.txt")
