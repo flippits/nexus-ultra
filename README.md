@@ -238,6 +238,8 @@ All AI engines are optional. The app will use whichever engine you have configur
 
 ## Claude Code Integration
 
+> **Free on every plan.** The MCP integration works with Claude Code's free tier — no Anthropic API key required. If you already have Claude Code installed, you just need to add the JSON config block below. Nothing to reinstall or upgrade.
+
 NEXUS ULTRA runs a built-in **MCP (Model Context Protocol) server** on `http://localhost:8765/mcp`. When the app is open, Claude Code CLI can connect to it and interact with your live engagement data directly from the terminal.
 
 ### What Claude Code can do
@@ -253,16 +255,19 @@ NEXUS ULTRA runs a built-in **MCP (Model Context Protocol) server** on `http://l
 
 ### Setup
 
-**Step 1 — Install Claude Code** (requires Node.js 18+):
+> **Already have Claude Code?** Skip straight to Step 2 — just add the JSON config block and you're done. No reinstall, no upgrade needed. Works on every Claude plan including free.
+
+**Step 1 — Install Claude Code** (skip if you already have it):
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
+Requires Node.js 18+. Claude Code is free to install and use — get it at [claude.ai/code](https://claude.ai/code) or via the command above.
 
 **Step 2 — Open NEXUS ULTRA.** The backend must be running for Claude Code to reach it.
 
-**Step 3 — Add the MCP server to your config.**
+**Step 3 — Add one entry to your Claude Code config.**
 
-Open (or create) `~/.claude.json` and add the following. If the file already has content, merge the `mcpServers` key into it.
+Open (or create) `~/.claude.json` and add the `mcpServers` block. If the file already has content, merge the key in — don't replace the whole file.
 
 ```json
 {
@@ -275,8 +280,8 @@ Open (or create) `~/.claude.json` and add the following. If the file already has
 }
 ```
 
-| OS | Config file location |
-|----|---------------------|
+| OS | Config file path |
+|----|-----------------|
 | macOS / Linux | `~/.claude.json` |
 | Windows | `%USERPROFILE%\.claude.json` |
 
@@ -287,7 +292,7 @@ Open (or create) `~/.claude.json` and add the following. If the file already has
 claude
 ```
 
-Claude Code will automatically discover the `nexus-ultra` MCP server on startup.
+Claude Code discovers the `nexus-ultra` MCP server automatically on startup — no extra flags needed.
 
 ### Example prompts
 
