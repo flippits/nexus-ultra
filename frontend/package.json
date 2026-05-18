@@ -1,7 +1,7 @@
 {
   "name": "nexus-ultra",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "AI-powered cybersecurity platform — 12 elite agents, Groq/Gemini free AI, Kali Docker, OSINT",
   "author": "NEXUS ULTRA",
   "repository": {
