@@ -38,6 +38,7 @@ jobs:
         run: npm run build:mac
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
@@ -148,7 +149,7 @@ jobs:
 
             AI-powered cybersecurity platform — 12 elite agents, free cloud AI, Kali Linux Docker, full OSINT.
 
-            **Python is not required** — the backend is bundled inside the installer.
+            **No prerequisites** — Python is bundled inside the installer.
 
             ### Downloads
             | Platform | File |
@@ -157,15 +158,20 @@ jobs:
             | Windows 10/11 | `NEXUS ULTRA Setup *.exe` |
             | Linux | `NEXUS ULTRA-*.AppImage` |
 
+            ### macOS — "cannot verify" warning
+            The app is not signed with an Apple certificate. To open it:
+            - **Right-click → Open** → click Open in the dialog (easiest, one-time)
+            - **Or run in Terminal:** `xattr -cr "/Applications/NEXUS ULTRA.app"`
+            - **Or:** System Settings → Privacy & Security → Open Anyway
+
             ### Optional (for enhanced features)
-            - **Docker** — for Kali Linux integration
-            - **Ollama** — for free local AI models ([ollama.com](https://ollama.com))
+            - **Docker** — Kali Linux integration
+            - **Ollama** — local AI models ([ollama.com](https://ollama.com))
             - **Groq API key** — free 800 tok/s cloud AI ([console.groq.com](https://console.groq.com))
             - **Gemini API key** — free 1M tokens/day ([aistudio.google.com](https://aistudio.google.com/app/apikey))
 
             ### First Launch
             The onboarding wizard guides you through AI engine setup.
-            No prerequisites — just download and run.
           files: |
             artifacts/**/*.dmg
             artifacts/**/*.exe

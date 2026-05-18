@@ -30,6 +30,9 @@
     "asar": true,
     "mac": {
       "category": "public.app-category.developer-tools",
+      "identity": null,
+      "gatekeeperAssess": false,
+      "hardenedRuntime": false,
       "target": [
         { "target": "dmg", "arch": ["arm64", "x64"] }
       ]

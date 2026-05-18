@@ -73,14 +73,28 @@ Get the latest installer for your platform from the [**Releases page**](https://
 | Windows 10/11 | `NEXUS ULTRA Setup *.exe` |
 | Linux | `NEXUS ULTRA-*.AppImage` |
 
+### macOS — first launch
+
+macOS will show a security warning because the app isn't signed with an Apple Developer certificate. To open it:
+
+**Option 1 — right-click method (easiest):**
+1. Right-click (or Control-click) `NEXUS ULTRA.app` → **Open**
+2. Click **Open** in the dialog — you only need to do this once
+
+**Option 2 — Terminal (one command):**
+```bash
+xattr -cr "/Applications/NEXUS ULTRA.app"
+```
+Then double-click to open normally.
+
+**Option 3 — System Settings:**
+System Settings → Privacy & Security → scroll down → **Open Anyway**
+
 ### Requirements
-- **Python 3.10+** — [python.org/downloads](https://www.python.org/downloads/)
 - **Docker** (optional) — for Kali Linux integration
 - **Ollama** (optional) — for free local AI models — [ollama.com](https://ollama.com)
 - **Groq API key** (optional, free) — [console.groq.com](https://console.groq.com)
 - **Gemini API key** (optional, free) — [aistudio.google.com](https://aistudio.google.com/app/apikey)
-
-> Python dependencies are installed automatically on first launch.
 
 ---
 
