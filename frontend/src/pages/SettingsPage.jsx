@@ -1,4 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+
+const platform = typeof window !== 'undefined' ? (window.electronAPI?.platform ?? '') : ''
+const configPath = platform === 'win32'
+  ? '%USERPROFILE%\\.claude.json'
+  : '~/.claude.json'
 
 const DEFAULT = {
   groqKey: '',
@@ -149,6 +154,8 @@ export default function SettingsPage() {
         {saved && <span style={{ color: 'var(--accent-green)', fontSize: 11 }}>✓ Saved!</span>}
       </div>
 
+      <ClaudeCodeSection port={config.backendPort} />
+
       <div style={{ marginTop: 32, padding: 16, background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <div style={{ color: 'var(--accent-cyan)', fontSize: 11, marginBottom: 10, letterSpacing: 2 }}>SYSTEM INFO</div>
         <Info label="App Version" value="1.0.0" />
@@ -188,6 +195,77 @@ function Info({ label, value }) {
     <div style={{ display: 'flex', gap: 12, marginBottom: 6 }}>
       <span style={{ color: 'var(--text-muted)', fontSize: 11, minWidth: 120 }}>{label}:</span>
       <span style={{ color: 'var(--accent-cyan)', fontSize: 11 }}>{value}</span>
+    </div>
+  )
+}
+
+function ClaudeCodeSection({ port = '8765' }) {
+  const [copied, setCopied] = useState(false)
+  const config = JSON.stringify({
+    mcpServers: {
+      "nexus-ultra": {
+        type: "http",
+        url: `http://localhost:${port}/mcp`,
+      }
+    }
+  }, null, 2)
+
+  const copy = useCallback(() => {
+    navigator.clipboard.writeText(config).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }, [config])
+
+  return (
+    <div style={{ marginTop: 24, marginBottom: 24 }}>
+      <div style={{ color: 'var(--accent-purple)', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, paddingBottom: 6, borderBottom: '1px solid var(--accent-purple)33' }}>
+        CLAUDE CODE INTEGRATION
+      </div>
+      <div style={{ color: 'var(--text-secondary)', fontSize: 11, marginBottom: 12, lineHeight: 1.6 }}>
+        Connect Claude Code CLI to NEXUS ULTRA. Once connected, Claude Code can read your targets, findings, and reports — and add findings directly from the terminal.
+      </div>
+      <div style={{ marginBottom: 10 }}>
+        <div style={{ color: 'var(--text-muted)', fontSize: 10, marginBottom: 6 }}>
+          1. Make sure NEXUS ULTRA is open (the backend must be running)
+        </div>
+        <div style={{ color: 'var(--text-muted)', fontSize: 10, marginBottom: 6 }}>
+          2. Add this to <code style={{ color: 'var(--accent-cyan)', background: 'var(--bg-card)', padding: '1px 5px' }}>{configPath}</code>:
+        </div>
+      </div>
+      <div style={{ position: 'relative' }}>
+        <pre style={{
+          background: 'var(--bg-card)',
+          border: '1px solid var(--accent-purple)44',
+          padding: '12px 14px',
+          fontSize: 11,
+          color: 'var(--accent-cyan)',
+          fontFamily: 'monospace',
+          margin: 0,
+          overflowX: 'auto',
+          lineHeight: 1.5,
+        }}>
+          {config}
+        </pre>
+        <button
+          onClick={copy}
+          style={{
+            position: 'absolute', top: 8, right: 8,
+            background: copied ? 'var(--accent-green)22' : 'var(--bg-secondary)',
+            border: `1px solid ${copied ? 'var(--accent-green)' : 'var(--border)'}`,
+            color: copied ? 'var(--accent-green)' : 'var(--text-muted)',
+            padding: '3px 10px', fontSize: 10, cursor: 'pointer',
+            fontFamily: 'inherit', letterSpacing: 1,
+          }}
+        >
+          {copied ? '✓ COPIED' : 'COPY'}
+        </button>
+      </div>
+      <div style={{ color: 'var(--text-muted)', fontSize: 10, marginTop: 10 }}>
+        3. Open a terminal and run{' '}
+        <code style={{ color: 'var(--accent-cyan)', background: 'var(--bg-card)', padding: '1px 5px' }}>claude</code>{' '}
+        — then try: <em style={{ color: 'var(--text-secondary)' }}>"list my NEXUS targets"</em> or <em style={{ color: 'var(--text-secondary)' }}>"show critical findings for target 1"</em>
+      </div>
     </div>
   )
 }

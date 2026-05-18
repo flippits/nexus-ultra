@@ -7,6 +7,7 @@ from database import init_db, engine
 from sqlalchemy import text
 from routers import targets, graph, findings, tools, ai, osint, reports
 from routers import docker_router, flipper, network
+from routers.mcp_router import mcp
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -34,6 +35,9 @@ app.include_router(reports.router, prefix="/reports", tags=["reports"])
 app.include_router(docker_router.router, prefix="/docker", tags=["docker"])
 app.include_router(flipper.router, prefix="/flipper", tags=["flipper"])
 app.include_router(network.router, prefix="/network", tags=["network"])
+
+# MCP server — Claude Code connects to http://localhost:8765/mcp
+app.mount("/mcp", mcp.streamable_http_app())
 
 @app.get("/health")
 async def health():
