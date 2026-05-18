@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  nexus-kali:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nexus-kali:latest
+    container_name: nexus-kali
+    hostname: nexus-kali
+    restart: unless-stopped
+    privileged: true          # needed for aircrack-ng, tcpdump raw sockets
+    tty: true
+    stdin_open: true
+    environment:
+      - TERM=xterm-256color
+      - HOME=/root
+    volumes:
+      # Shared data — wordlists, findings, output all accessible from both sides
+      - ../data:/nexus/data
+      # SSH keys if needed
+      - ~/.ssh:/root/.ssh:ro
+    ports:
+      # Metasploit handler
+      - "4444:4444"
+      # HTTP server
+      - "8080:8080"
+      # Listener
+      - "9090:9090"
+    networks:
+      - nexus-net
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_PTRACE
+
+networks:
+  nexus-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

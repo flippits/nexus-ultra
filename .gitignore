@@ -1,0 +1,11 @@
+backend/.env
+*.pyc
+__pycache__/
+node_modules/
+dist/
+dist-app/
+*.db
+.DS_Store
+backend/*.txt
+!backend/requirements.txt
+data/wordlists/rockyou.txt
